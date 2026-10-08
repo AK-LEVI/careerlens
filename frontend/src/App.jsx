@@ -301,8 +301,16 @@ function App() {
         <section className="welcome-row">
           <div className="welcome-copy">
             <p className="eyebrow"><span className="eyebrow-line" /> YOUR NEXT CHAPTER STARTS HERE</p>
-            <h1>Make your next move<br /><span>with confidence.</span></h1>
+            <h1>Your next role,<br /><span>within reach.</span></h1>
             <p className="welcome-subtitle">See how your experience lines up with the role you want — and get a clear plan for what comes next.</p>
+          </div>
+          <div className="welcome-art" aria-hidden="true">
+            <span className="welcome-art__ring welcome-art__ring--one" />
+            <span className="welcome-art__ring welcome-art__ring--two" />
+            <span className="welcome-art__orb" />
+            <span className="welcome-art__spark welcome-art__spark--one" />
+            <span className="welcome-art__spark welcome-art__spark--two" />
+            <span className="welcome-art__caption">A clearer direction<br /><strong>starts here</strong></span>
           </div>
           <div className="welcome-note">
             <div className="welcome-note__icon"><Sparkles size={18} /></div>
