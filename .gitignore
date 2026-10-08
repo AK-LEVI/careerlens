@@ -1,0 +1,17 @@
+**/node_modules/
+**/dist/
+**/.vite/
+**/__pycache__/
+**/.venv/
+**/venv/
+**/*.db
+**/*.db-shm
+**/*.db-wal
+backend/.env
+backend/main.py.txt
+backend/careerlens.db
+backend/careerlens.db-shm
+backend/careerlens.db-wal
+frontend/.env
+**/.env
+*.log
