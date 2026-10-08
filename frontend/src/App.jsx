@@ -93,6 +93,27 @@ function ScoreDial({ score }) {
   );
 }
 
+function SkillPieChart({ skills = [] }) {
+  const found = skills.filter((skill) => skill.status === "verified").length;
+  const total = skills.length;
+  const circumference = 2 * Math.PI * 48;
+  const foundLength = total ? (found / total) * circumference : 0;
+  return (
+    <div className="coverage-chart-wrap">
+      <svg className="coverage-chart" viewBox="0 0 136 136" role="img" aria-label={`${found} of ${total} role skills found`}>
+        <circle className="coverage-chart__track" cx="68" cy="68" r="48" />
+        {found > 0 && <circle className="coverage-chart__found" cx="68" cy="68" r="48" strokeDasharray={`${foundLength} ${circumference}`} />}
+        <text className="coverage-chart__value" x="68" y="66" textAnchor="middle">{found}/{total}</text>
+        <text className="coverage-chart__label" x="68" y="83" textAnchor="middle">skills found</text>
+      </svg>
+      <div className="coverage-legend" aria-label="Skill coverage legend">
+        <span><i className="coverage-legend__dot coverage-legend__dot--found" />Found <strong>{found}</strong></span>
+        <span><i className="coverage-legend__dot coverage-legend__dot--gap" />To build <strong>{Math.max(0, total - found)}</strong></span>
+      </div>
+    </div>
+  );
+}
+
 function App() {
   const [roles, setRoles] = useState([]);
   const [health, setHealth] = useState(null);
@@ -419,7 +440,10 @@ function App() {
                 </section>
                 <section className="skills-card card-panel">
                   <div className="card-heading-row"><div><p className="section-kicker">THE SKILL MAP</p><h3>What we found</h3></div><span className="skill-count">{matchedCount}/{result.skills?.length || 0}</span></div>
-                  <div className="skill-list">{result.skills?.map((skill) => <div className="skill-row" key={skill.name}><span className={`skill-status ${skill.status === "verified" ? "skill-status--found" : ""}`}>{skill.status === "verified" ? <Check size={12} /> : <span />}</span><span className="skill-row__name">{skill.name}</span><span className={`skill-row__label ${skill.status === "verified" ? "skill-row__label--found" : ""}`}>{skill.status === "verified" ? "Found" : "To build"}</span></div>)}</div>
+                  <div className="skills-card__body">
+                    <SkillPieChart skills={result.skills || []} />
+                    <div className="skill-list">{result.skills?.map((skill) => <div className="skill-row" key={skill.name}><span className={`skill-status ${skill.status === "verified" ? "skill-status--found" : ""}`}>{skill.status === "verified" ? <Check size={12} /> : <span />}</span><span className="skill-row__name">{skill.name}</span><span className={`skill-row__label ${skill.status === "verified" ? "skill-row__label--found" : ""}`}>{skill.status === "verified" ? "Found" : "To build"}</span></div>)}</div>
+                  </div>
                 </section>
               </div>
 
