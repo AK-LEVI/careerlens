@@ -451,6 +451,64 @@ def make_roadmap(gaps: list[str]) -> list[dict[str, Any]]:
     return roadmap
 
 
+def analyze_resume_quality(resume_text: str, github_url: str, portfolio_url: str) -> dict[str, Any]:
+    """Return transparent writing-quality signals without judging the candidate."""
+    words = re.findall(r"[A-Za-z0-9][A-Za-z0-9+#./-]*", resume_text)
+    lines = [line.strip() for line in resume_text.splitlines() if line.strip()]
+    lower_text = resume_text.lower()
+    section_names = {
+        "Experience": ("experience", "employment", "work history"),
+        "Projects": ("projects", "project experience"),
+        "Skills": ("skills", "technical skills", "technologies"),
+        "Education": ("education", "university", "bachelor", "master", "b.tech", "bsc", "msc"),
+    }
+    sections_found = [name for name, terms in section_names.items() if any(term in lower_text for term in terms)]
+    action_verbs = (
+        "built", "developed", "designed", "created", "implemented", "led", "improved", "reduced",
+        "increased", "deployed", "trained", "analyzed", "automated", "delivered", "launched",
+    )
+    action_count = sum(1 for verb in action_verbs if re.search(rf"\b{re.escape(verb)}\b", lower_text))
+    bullet_count = sum(1 for line in lines if re.match(r"^(?:[-*•]|\d+[.)])\s+", line))
+    impact_count = sum(1 for line in lines if re.search(r"(?:\b\d+(?:\.\d+)?%|\$\d|\b\d{2,}[,+]?\b)", line))
+    length_score = min(25, round(len(words) / 12.0))
+    section_score = round(25 * len(sections_found) / len(section_names))
+    action_score = min(25, action_count * 4)
+    evidence_score = min(25, bullet_count * 2 + impact_count * 4)
+    score = min(100, length_score + section_score + action_score + evidence_score)
+    suggestions = []
+    if len(words) < 180:
+        suggestions.append("Add concise detail about your projects, responsibilities, and outcomes.")
+    if len(sections_found) < 3:
+        missing = [name for name in section_names if name not in sections_found]
+        suggestions.append(f"Add clear section headings such as {', '.join(missing[:2])}.")
+    if action_count < 4:
+        suggestions.append("Start more experience bullets with action verbs such as Built, Improved, or Deployed.")
+    if impact_count < 2:
+        suggestions.append("Add measurable outcomes where possible, such as time saved, users reached, or model accuracy.")
+    if not (github_url or portfolio_url):
+        suggestions.append("Add a GitHub or portfolio link to make your projects easier to review.")
+    return {
+        "score": score,
+        "label": "Well structured" if score >= 75 else "Good start" if score >= 50 else "Needs more evidence",
+        "word_count": len(words),
+        "sections": sections_found,
+        "action_verbs": action_count,
+        "bullet_points": bullet_count,
+        "impact_statements": impact_count,
+        "suggestions": suggestions[:3],
+    }
+
+
+def build_role_matches(resume_text: str, github_text: str, selected_role: str) -> list[dict[str, Any]]:
+    all_text = "\n".join(part for part in (resume_text, github_text) if part)
+    matches = []
+    for role, required_skills in ROLE_SKILLS.items():
+        found = [skill for skill in required_skills if has_skill(all_text, skill)]
+        score = round(100 * len(found) / len(required_skills)) if required_skills else 0
+        matches.append({"role": role, "score": score, "matched_skills": len(found), "required_skills": len(required_skills)})
+    return sorted(matches, key=lambda item: (item["role"] != selected_role, -item["score"], item["role"]))[:4]
+
+
 def build_analysis(candidate: AnalysisInput, resume_text: str, github_text: str, github_info: dict[str, Any] | None) -> dict[str, Any]:
     required = ROLE_SKILLS[candidate.target_role]
     all_sources = [("resume", resume_text), ("github", github_text)]
@@ -498,6 +556,8 @@ def build_analysis(candidate: AnalysisInput, resume_text: str, github_text: str,
         "summary": summary,
         "sources": source_names,
         "github": github_info,
+        "resume_quality": analyze_resume_quality(resume_text, candidate.github_url, candidate.portfolio_url),
+        "role_matches": build_role_matches(resume_text, github_text, candidate.target_role),
         "warnings": [],
     }
 
@@ -559,6 +619,8 @@ def decode_row(row: sqlite3.Row) -> dict[str, Any]:
     result["role_fit"] = stored_insights.get("role_fit", "")
     result["strengths"] = stored_insights.get("strengths", [])
     result["recommendations"] = stored_insights.get("recommendations", [])
+    result["resume_quality"] = stored_insights.get("resume_quality", {})
+    result["role_matches"] = stored_insights.get("role_matches", [])
     return result
 
 
@@ -596,7 +658,8 @@ async def analyze(request: Request) -> dict[str, Any]:
             json.dumps(result["roadmap"]), now, result["summary"],
             json.dumps(result["sources"]), ANALYSIS_VERSION,
             json.dumps({"ai": result["ai"], "role_fit": result["role_fit"],
-                        "strengths": result["strengths"], "recommendations": result["recommendations"]}),
+                        "strengths": result["strengths"], "recommendations": result["recommendations"],
+                        "resume_quality": result["resume_quality"], "role_matches": result["role_matches"]}),
         ))
         result["id"] = cursor.lastrowid
         result["created_at"] = now

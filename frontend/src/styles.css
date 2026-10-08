@@ -268,6 +268,25 @@ h1 span { color: #6d8e62; }
 .roadmap-complete strong { color: #577250; font-size: 10px; }
 .roadmap-complete p { margin: 4px 0 0; color: #8b9987; font-size: 9px; }
 .recommendation-bar { display: flex; align-items: center; gap: 11px; margin-top: 14px; padding: 13px 15px; border: 1px solid #e5ebd9; border-radius: 10px; background: linear-gradient(90deg,#f5f9ef,#fff); }
+.quality-card,.role-matches { margin-top: 15px; padding: 20px 22px; }
+.quality-score { display: inline-flex; align-items: center; gap: 6px; padding: 6px 9px; border-radius: 18px; color: #55764f; background: #eaf4df; font: 700 10px 'Manrope',sans-serif; }
+.quality-intro { margin: 11px 0 0; color: #879187; font-size: 9px; line-height: 1.6; }
+.quality-signals { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; margin-top: 14px; }
+.quality-signals>div { display: flex; flex-direction: column; gap: 3px; padding: 11px; border: 1px solid #edf0ea; border-radius: 9px; background: #fbfcfa; }
+.quality-signals strong { color: #426747; font: 700 17px 'Manrope',sans-serif; }
+.quality-signals span { color: #929c91; font-size: 8px; }
+.quality-suggestions { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; margin-top: 12px; }
+.quality-suggestions p { display: flex; align-items: flex-start; gap: 6px; min-width: 0; margin: 0; padding: 9px; color: #738171; background: #f7faf4; border-radius: 8px; font-size: 8px; line-height: 1.55; }
+.quality-suggestions svg { flex: 0 0 auto; color: #6c9764; margin-top: 1px; }
+.role-match-list { display: grid; grid-template-columns: repeat(2, 1fr); gap: 10px; margin-top: 14px; }
+.role-match { padding: 11px; border: 1px solid #edf0ea; border-radius: 9px; background: #fcfdfb; }
+.role-match__top { display: flex; justify-content: space-between; align-items: baseline; gap: 8px; }
+.role-match__top strong { color: #506051; font: 700 10px 'Manrope',sans-serif; }
+.role-match__top span { color: #909a90; font-size: 8px; white-space: nowrap; }
+.role-match__track { overflow: hidden; height: 5px; margin: 9px 0 8px; background: #eef2eb; border-radius: 10px; }
+.role-match__track i { display: block; height: 100%; min-width: 2px; border-radius: inherit; background: linear-gradient(90deg,#83a976,#518060); }
+.role-match button { display: inline-flex; align-items: center; gap: 3px; border: 0; padding: 0; background: transparent; color: #63885b; font: 600 8px 'DM Sans',sans-serif; cursor: pointer; }
+.role-match button:hover { color: #315c3e; text-decoration: underline; text-underline-offset: 2px; }
 .recommendation-bar>span { display: inline-flex; align-items: center; gap: 6px; color: #6b855f; font-size: 9px; font-weight: 700; white-space: nowrap; }
 .recommendation-bar p { color: #758174; font-size: 9px; margin: 0; line-height: 1.5; }
 .result-footer { display: flex; align-items: center; justify-content: space-between; padding: 12px 2px 0; color: #919b91; font-size: 9px; }
@@ -342,6 +361,9 @@ h1 span { color: #6d8e62; }
   .result-footer { align-items: start; gap: 8px; font-size: 8px; }
   .result-footer button { font-size: 8px; }
   .recommendation-bar { align-items: start; flex-direction: column; }
+  .quality-card,.role-matches { padding: 17px 15px; }
+  .quality-signals { grid-template-columns: repeat(2, 1fr); }
+  .quality-suggestions,.role-match-list { grid-template-columns: 1fr; }
 }
 @media (max-width: 380px) {
   .topbar { padding: 0 9px; }

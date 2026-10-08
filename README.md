@@ -45,6 +45,8 @@ If this computer has Node but not npm on its PATH, install the Node.js LTS packa
 - Accepts PDF, DOCX, and TXT resumes up to 5 MB.
 - Also accepts pasted resume text and includes a sample resume for a quick walkthrough.
 - Compares resume evidence with 10 target roles and gives a score, strengths, skill gaps, and a roadmap.
+- Reviews resume clarity with word, section, action-verb, bullet, and measurable-outcome signals, then suggests concrete improvements.
+- Compares the same evidence across supported career paths so users can explore nearby role matches.
 - Searches and sorts saved analyses, loads older history pages, and exports reports as JSON or print-ready PDF.
 - Checks public GitHub repositories when a profile link is supplied.
 - Uses OpenAI's Responses API for tailored insights when `OPENAI_API_KEY` is configured. The key is only read by the backend. Resume text is sent to OpenAI only when this feature is enabled, and is never stored in SQLite.

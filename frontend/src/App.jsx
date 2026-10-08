@@ -5,6 +5,7 @@ import {
   ArrowRight,
   ArrowUpRight,
   BadgeCheck,
+  BarChart3,
   BriefcaseBusiness,
   Check,
   CheckCircle2,
@@ -13,6 +14,7 @@ import {
   Clock3,
   Download,
   FileCheck2,
+  FileSearch,
   FileText,
   Github,
   History,
@@ -432,6 +434,22 @@ function App() {
                   {result.roadmap?.length ? <div className="roadmap-list">{result.roadmap.map((step, index) => <article className="roadmap-step" key={`${step.skill}-${index}`}><span className="roadmap-step__number">{String(index + 1).padStart(2, "0")}</span><div className="roadmap-step__body"><div className="roadmap-step__top"><strong>{step.skill}</strong><span><Clock3 size={12} /> {step.estimated_time || "Start this week"}</span></div><p>{step.action}</p>{step.resource && <a href={step.resource} target="_blank" rel="noreferrer">Explore a learning resource <ArrowUpRight size={13} /></a>}</div></article>)}</div> : <div className="roadmap-complete"><span><CheckCircle2 size={20} /></span><div><strong>You’ve covered the focus skills.</strong><p>Keep sharpening them with a project that shows your work.</p></div></div>}
                 </section>
               </div>
+              {result.resume_quality && Object.keys(result.resume_quality).length > 0 && <section className="quality-card card-panel">
+                <div className="card-heading-row"><div><p className="section-kicker">RESUME QUALITY</p><h3>Make the evidence easier to see</h3></div><span className="quality-score"><FileSearch size={15} /> {result.resume_quality.score || 0}/100</span></div>
+                <p className="quality-intro">{result.resume_quality.label || "Resume review"} · This checks how clearly your resume shows work, not your ability or potential.</p>
+                <div className="quality-signals">
+                  <div><strong>{result.resume_quality.word_count || 0}</strong><span>words</span></div>
+                  <div><strong>{result.resume_quality.sections?.length || 0}</strong><span>sections</span></div>
+                  <div><strong>{result.resume_quality.action_verbs || 0}</strong><span>action verbs</span></div>
+                  <div><strong>{result.resume_quality.impact_statements || 0}</strong><span>measurable results</span></div>
+                </div>
+                {result.resume_quality.suggestions?.length > 0 && <div className="quality-suggestions">{result.resume_quality.suggestions.map((suggestion) => <p key={suggestion}><CheckCircle2 size={14} />{suggestion}</p>)}</div>}
+              </section>}
+              {result.role_matches?.length > 0 && <section className="role-matches card-panel">
+                <div className="card-heading-row"><div><p className="section-kicker">CAREER EXPLORER</p><h3>Other paths your experience can support</h3></div><span className="insight-icon insight-icon--green"><BarChart3 size={17} /></span></div>
+                <p className="quality-intro">A quick comparison across CareerLens roles based on the same resume evidence.</p>
+                <div className="role-match-list">{result.role_matches.map((match) => <div className="role-match" key={match.role}><div className="role-match__top"><strong>{match.role}</strong><span>{match.matched_skills}/{match.required_skills} skills · {match.score}%</span></div><div className="role-match__track"><i style={{ width: `${match.score}%` }} /></div>{match.role !== result.candidate?.target_role && <button type="button" onClick={() => { setTargetRole(match.role); setResult(null); window.scrollTo({ top: 0, behavior: "smooth" }); }}>Explore this role <ArrowUpRight size={13} /></button>}</div>)}</div>
+              </section>}
               {result.recommendations?.length > 0 && result.ai?.enabled && <section className="recommendation-bar"><span><Sparkles size={16} /> A personal note</span><p>{result.recommendations[0]}</p></section>}
               <div className="result-footer"><span><LockKeyhole size={13} /> Saved to your CareerLens history</span><button onClick={() => { setResult(null); setResume(null); setResumeText(""); setCandidateName(""); window.scrollTo({ top: 0, behavior: "smooth" }); }}><ArrowLeft size={14} /> Start another analysis</button></div>
             </section>}
